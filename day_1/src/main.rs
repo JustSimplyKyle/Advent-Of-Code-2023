@@ -1,9 +1,9 @@
-use anyhow::Result;
+use anyhow::{anyhow, Context, Result};
 const VALID_LETTERS: &[&str] = &[
     "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
 ];
 fn convert_to_string_integers(input: &str) -> String {
-    match &input[..] {
+    match input {
         "one" => "1",
         "two" => "2",
         "three" => "3",
@@ -16,20 +16,20 @@ fn convert_to_string_integers(input: &str) -> String {
         x if x.parse::<i32>().is_ok() => x,
         _ => panic!("fuck"),
     }
-    .to_string()
+    .to_owned()
 }
 fn main() -> Result<()> {
-    let mut input = Vec::new();
-    for t in std::io::stdin().lines() {
-        input.push(t?);
-    }
-    let ans = input.iter().fold(0, |acc, x| {
+    let input = std::io::stdin()
+        .lines()
+        .map(|x| x.map_err(|y| anyhow!(y)))
+        .collect::<Result<Vec<_>>>()?;
+    let ans: Result<i32> = input.iter().try_fold(0, |acc, x| {
         let mut all_numbers = Vec::new();
         let number_matching = x.match_indices(char::is_numeric).collect::<Vec<_>>();
         if !number_matching.is_empty() {
             all_numbers.extend(number_matching);
         }
-        for word in VALID_LETTERS.iter() {
+        for word in VALID_LETTERS {
             let english_matching = x.match_indices(word).collect::<Vec<_>>();
             if !english_matching.is_empty() {
                 all_numbers.extend(english_matching);
@@ -40,11 +40,14 @@ fn main() -> Result<()> {
             .into_iter()
             .map(|x| convert_to_string_integers(x.1))
             .collect::<Vec<_>>();
-        let first = all_numbers.first().unwrap().to_owned();
-        let last = all_numbers.last().unwrap();
-        let ans = (first + last).parse::<i32>().unwrap();
-        acc + ans
+        let first = all_numbers
+            .first()
+            .context("Can't find first number")?
+            .clone();
+        let last = all_numbers.last().context("Can't find last number")?;
+        let ans = (first + last).parse::<i32>()?;
+        Ok(acc + ans)
     });
-    println!("{ans}");
+    println!("{}", ans?);
     Ok(())
 }
