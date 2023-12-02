@@ -38,8 +38,7 @@ fn main() {
         .inspect(|x| {
             dbg!(x);
         })
-        .map(|x| dbg!(x.1.values().product::<i32>()))
+        .map(|x| x.1.values().product::<i32>())
         .sum();
-    dbg!(ans);
-    println!("Hello, world!");
+    println!("{ans}");
 }
