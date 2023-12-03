@@ -11,14 +11,14 @@ fn main() {
             x.iter().fold((u, HashMap::new()), |(u, mut acc), x| {
                 for (key, value) in x
                     .split(',')
-                    .map(|x| x.trim_start().trim_end())
+                    .map(|x| x.trim())
                     .map(|x| x.split(' ').collect::<Vec<_>>())
                     .map(|x| (x[1], x[0]))
                 {
                     let value = value.parse::<i32>().unwrap();
-                    if let Some(p) = acc.iter_mut().find(|x| x.0 == &key) {
-                        if *p.1 < value {
-                            *p.1 = value;
+                    if let Some(p) = acc.get_mut(&key) {
+                        if *p < value {
+                            *p = value;
                         }
                     } else {
                         acc.insert(key, value);
