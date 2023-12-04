@@ -24,13 +24,13 @@ fn main() {
         })
         .map(|(u, (ans, numbers))| (u, numbers.iter().filter(|x| ans.contains(x)).count()))
         .map(|(u, x)| (u.split(' ').last().unwrap().parse::<u32>().unwrap(), x))
-        .fold(HashMap::new(), |mut acc, (u, x)| {
-            let x: u32 = x.try_into().unwrap();
-            acc.entry(u).or_insert(1);
-            for p in u + 1..=u + x {
-                acc.entry(p).or_insert(1);
-                let repeating_count = *acc.get(&u).unwrap();
-                let next = acc.get_mut(&p).unwrap();
+        .fold(HashMap::new(), |mut acc, (current, value)| {
+            let value: u32 = value.try_into().unwrap();
+            acc.entry(current).or_insert(1);
+            for target in current + 1..=current + value {
+                acc.entry(target).or_insert(1);
+                let repeating_count = *acc.get(&current).unwrap();
+                let next = acc.get_mut(&target).unwrap();
                 *next += repeating_count;
             }
             acc
