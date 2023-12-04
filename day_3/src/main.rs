@@ -79,11 +79,11 @@ fn current_line(p: &String, x: usize, now: &mut Vec<String>) {
     }
 }
 
-fn now_vs_prev(p: &String, x: usize, v: &mut Vec<String>) -> ControlFlow<()> {
-    let up = p.chars().nth(x).map(char::is_numeric);
+fn now_vs_prev(dest: &String, pos: usize, v: &mut Vec<String>) -> ControlFlow<()> {
+    let up = dest.chars().nth(pos).map(char::is_numeric);
     if up == Some(true) {
-        let right = &p[x..];
-        let left = &p[..=x];
+        let right = &dest[pos..];
+        let left = &dest[..=pos];
         let back = rev_search(left);
         let front = search_forward(right);
 
@@ -103,17 +103,17 @@ fn now_vs_prev(p: &String, x: usize, v: &mut Vec<String>) -> ControlFlow<()> {
         };
         v.push(ans);
     } else {
-        let left_diagnoal = p.chars().nth(x - 1).map(char::is_numeric);
+        let left_diagnoal = dest.chars().nth(pos - 1).map(char::is_numeric);
         if left_diagnoal == Some(true) {
-            let c = &p[..x];
+            let c = &dest[..pos];
             let element = rev_search(c);
             if let Some(element) = element {
                 v.push(element);
             }
         }
-        let right_diagonal = p.chars().nth(x + 1).map(char::is_numeric);
+        let right_diagonal = dest.chars().nth(pos + 1).map(char::is_numeric);
         if right_diagonal == Some(true) {
-            let c = &p[x + 1..];
+            let c = &dest[pos + 1..];
             let element = search_forward(c);
             if let Some(element) = element {
                 v.push(element);
@@ -123,11 +123,11 @@ fn now_vs_prev(p: &String, x: usize, v: &mut Vec<String>) -> ControlFlow<()> {
     ControlFlow::Continue(())
 }
 
-fn now_vs_next(p: &String, x: usize, v: &mut Vec<String>) -> ControlFlow<()> {
-    let down = p.chars().nth(x).map(char::is_numeric);
+fn now_vs_next(dest: &String, pos: usize, v: &mut Vec<String>) -> ControlFlow<()> {
+    let down = dest.chars().nth(pos).map(char::is_numeric);
     if down == Some(true) {
-        let right = &p[x..];
-        let left = &p[..=x];
+        let right = &dest[pos..];
+        let left = &dest[..=pos];
         let back = rev_search(left);
         let front = search_forward(right);
         if back.is_none() || front.is_none() {
@@ -146,17 +146,17 @@ fn now_vs_next(p: &String, x: usize, v: &mut Vec<String>) -> ControlFlow<()> {
         };
         v.push(ans);
     } else {
-        let left_down = p.chars().nth(x - 1).map(char::is_numeric);
+        let left_down = dest.chars().nth(pos - 1).map(char::is_numeric);
         if left_down == Some(true) {
-            let c = &p[..x];
+            let c = &dest[..pos];
             let element = rev_search(c);
             if let Some(x) = element {
                 v.push(x);
             }
         }
-        let right_down = p.chars().nth(x + 1).map(char::is_numeric);
+        let right_down = dest.chars().nth(pos + 1).map(char::is_numeric);
         if right_down == Some(true) {
-            let c = &p[x + 1..];
+            let c = &dest[pos + 1..];
             let element = search_forward(c);
             if let Some(x) = element {
                 v.push(x);
