@@ -12,11 +12,11 @@ fn main() {
                 u,
                 (
                     x[0].split(' ')
-                        .map(|x| x.trim())
+                        .map(str::trim)
                         .filter(|x| !x.is_empty())
                         .collect::<Vec<_>>(),
                     x[1].split(' ')
-                        .map(|x| x.trim())
+                        .map(str::trim)
                         .filter(|x| !x.is_empty())
                         .collect::<Vec<_>>(),
                 ),
@@ -26,13 +26,9 @@ fn main() {
         .map(|(u, x)| (u.split(' ').last().unwrap().parse::<u32>().unwrap(), x))
         .fold(HashMap::new(), |mut acc, (u, x)| {
             let x: u32 = x.try_into().unwrap();
-            if !acc.contains_key(&u) {
-                acc.insert(u, 1);
-            }
+            acc.entry(u).or_insert(1);
             for p in u + 1..=u + x {
-                if !acc.contains_key(&p) {
-                    acc.insert(p, 1);
-                }
+                acc.entry(p).or_insert(1);
                 let repeating_count = *acc.get(&u).unwrap();
                 let next = acc.get_mut(&p).unwrap();
                 *next += repeating_count;
